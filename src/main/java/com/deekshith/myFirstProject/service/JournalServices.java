@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -30,9 +31,9 @@ public class JournalServices {
         return journalRepository.save(journalTable);
     }
 
-    public JournalTable findbyId(ObjectId id)
+    public Optional<JournalTable> findbyId(ObjectId id)
     {
-        return journalRepository.findById(id).orElse(null);
+        return journalRepository.findById(id);
     }
 
     public JournalTable updateJournal(ObjectId id,JournalTable journalTable)
