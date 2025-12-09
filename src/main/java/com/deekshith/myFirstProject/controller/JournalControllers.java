@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/journals")
-public class Controllers {
+public class JournalControllers {
 
 
     @Autowired
