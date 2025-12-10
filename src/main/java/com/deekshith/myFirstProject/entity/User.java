@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,7 +17,7 @@ import java.util.List;
 @Document(collation = "user")
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTable {
+public class User {
 
 
     @Id
@@ -32,6 +31,6 @@ public class UserTable {
     private String password;
 
     @DBRef
-    private List<JournalTable> journalEntries;
+    private List<Journal> journalEntries;
 
 }
