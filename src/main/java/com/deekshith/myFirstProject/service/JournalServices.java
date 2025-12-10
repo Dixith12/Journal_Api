@@ -63,7 +63,7 @@ public class JournalServices {
                         }).orElse(null);
     }
 
-    public void deletebyId(ObjectId id)
+    public void deletebyId(String username, ObjectId id)
     {
         journalRepository.deleteById(id);
     }
