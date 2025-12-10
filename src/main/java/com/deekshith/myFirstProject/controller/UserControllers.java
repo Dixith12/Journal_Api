@@ -1,11 +1,9 @@
 package com.deekshith.myFirstProject.controller;
 
 
-import com.deekshith.myFirstProject.entity.JournalTable;
-import com.deekshith.myFirstProject.entity.UserTable;
-import com.deekshith.myFirstProject.service.JournalServices;
+import com.deekshith.myFirstProject.entity.User;
+import com.deekshith.myFirstProject.repository.UserRepository;
 import com.deekshith.myFirstProject.service.UserServices;
-import org.apache.catalina.User;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,17 +14,22 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/journals")
+@RequestMapping("/user")
 public class UserControllers {
 
 
     @Autowired
     public UserServices userServices;
 
+    @Autowired
+    public UserRepository userRepository;
+
+
+
     @GetMapping
-    public ResponseEntity<List<UserTable>> getAll()
+    public ResponseEntity<List<User>> getAll()
     {
-        List<UserTable> journ = userServices.getAll();
+        List<User> journ = userServices.getAll();
         if(journ!=null&& !journ.isEmpty())
         {
 
@@ -37,10 +40,10 @@ public class UserControllers {
     }
 
     @PostMapping
-    public ResponseEntity<UserTable> create(@RequestBody UserTable userTable)
+    public ResponseEntity<User> create(@RequestBody User user)
     {
         try{
-            return new ResponseEntity<>(userServices.save(userTable),HttpStatus.CREATED);
+            return new ResponseEntity<>(userServices.save(user),HttpStatus.CREATED);
         }
         catch (Exception e)
         {
@@ -49,35 +52,28 @@ public class UserControllers {
 
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable ObjectId id)
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getById(@PathVariable String username)
     {
-        Optional<UserTable> userTable = userServices.findbyId(id);
-        if(userTable.isPresent())
+        User userTable = userServices.findbyUserName(username);
+        if(userTable !=null)
         {
-            return new ResponseEntity<>(userTable.get(),HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.FOUND);
         }
-
-        return new ResponseEntity<>(userServices.findbyId(id),HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable ObjectId id)
-    {
-        userServices.deletebyId(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<JournalTable> update(@RequestBody JournalTable journalTable,@PathVariable ObjectId id)
+//    @DeleteMapping("/{username}")
+//    public ResponseEntity<?> delete(@PathVariable String username)
 //    {
-//        try{
-//            return new ResponseEntity<>(userServices.updateJournal(id,journalTable),HttpStatus.OK);
-//        }
-//        catch (Exception e)
-//        {
-//
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
+//        userServices.deletebyId(username);
+//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //    }
+
+    @PutMapping("/username")
+    public ResponseEntity<?> update(@RequestBody User user, @PathVariable String username)
+    {
+
+         return new ResponseEntity<>(userServices.update(user,username),HttpStatus.OK);
+    }
 }

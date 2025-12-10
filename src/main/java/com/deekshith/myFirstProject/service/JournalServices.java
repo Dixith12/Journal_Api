@@ -1,6 +1,7 @@
 package com.deekshith.myFirstProject.service;
 
-import com.deekshith.myFirstProject.entity.JournalTable;
+import com.deekshith.myFirstProject.entity.Journal;
+import com.deekshith.myFirstProject.entity.User;
 import com.deekshith.myFirstProject.repository.JournalRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -19,30 +19,45 @@ public class JournalServices {
     public JournalRepository journalRepository;
 
 
+    @Autowired
+    public UserServices userServices;
 
-    public List<JournalTable> getAll()
+
+
+    public Journal save(Journal journal, String username)
     {
-        return journalRepository.findAll();
+        User user = userServices.findbyUserName(username);
+
+        if(user == null)
+        {
+            throw new RuntimeException("User Not FOund"+ username);
+        }
+        journal.setDate(LocalDateTime.now());
+        Journal saved = journalRepository.save(journal);
+        user.getJournalEntries().add(saved);
+        userServices.save(user);
+        return saved;
     }
 
-    public JournalTable save(JournalTable journalTable)
+    public List<Journal> findbyId(String username)
     {
-        journalTable.setDate(LocalDateTime.now());
-        return journalRepository.save(journalTable);
+        User user = userServices.findbyUserName(username);
+
+        if(user == null)
+        {
+            throw new RuntimeException("User Not FOund"+ username);
+        }
+        List<Journal> journals = user.getJournalEntries();
+        return journals!=null? journals : List.of();
     }
 
-    public Optional<JournalTable> findbyId(ObjectId id)
-    {
-        return journalRepository.findById(id);
-    }
-
-    public JournalTable updateJournal(ObjectId id,JournalTable journalTable)
+    public Journal updateJournal(ObjectId id, Journal journal)
     {
         return journalRepository.findById(id)
                 .map(existing->
                         {
-                        existing.setTitle(journalTable.getTitle());
-                        existing.setContent(journalTable.getContent());
+                        existing.setTitle(journal.getTitle());
+                        existing.setContent(journal.getContent());
                         existing.setDate(LocalDateTime.now());
                         return journalRepository.save(existing);
                         }).orElse(null);

@@ -1,15 +1,11 @@
 package com.deekshith.myFirstProject.service;
 
-import com.deekshith.myFirstProject.entity.JournalTable;
-import com.deekshith.myFirstProject.entity.UserTable;
-import com.deekshith.myFirstProject.repository.JournalRepository;
+import com.deekshith.myFirstProject.entity.User;
 import com.deekshith.myFirstProject.repository.UserRepository;
-import org.apache.catalina.User;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,37 +19,39 @@ public class UserServices {
 
 
 
-    public List<UserTable> getAll()
-    {
+    public List<User> getAll() {
         return userRepository.findAll();
     }
 
-    public UserTable save(UserTable userTable)
-    {
+    public User save(User user) {
 
-        return userRepository.save(userTable);
+        return userRepository.save(user);
     }
 
-    public Optional<UserTable> findbyId(ObjectId id)
-    {
-        return userRepository.findById(id);
+    public User findbyUserName(String username) {
+        return userRepository.findByUsername(username);
     }
 
-//    public JournalTable updateJournal(ObjectId id,JournalTable journalTable)
-//    {
-//        return journalRepository.findById(id)
-//                .map(existing->
-//                        {
-//                        existing.setTitle(journalTable.getTitle());
-//                        existing.setContent(journalTable.getContent());
-//                        existing.setDate(LocalDateTime.now());
-//                        return journalRepository.save(existing);
-//                        }).orElse(null);
-//    }
+    public User update(User updatedData, String username) {
 
-    public void deletebyId(ObjectId id)
-    {
+        User existingUser = userRepository.findByUsername(username);
+
+        if (existingUser == null) {
+            throw new RuntimeException("User not found: " + username);
+        }
+        existingUser.setUsername(updatedData.getUsername());
+        existingUser.setPassword(updatedData.getPassword());
+        return userRepository.save(existingUser);
+    }
+
+
+    public void deletebyId(ObjectId id) {
         userRepository.deleteById(id);
+    }
+
+    public User findby(String username)
+    {
+        return userRepository.findByUsername(username);
     }
 
 }
