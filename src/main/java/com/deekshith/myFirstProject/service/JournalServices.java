@@ -51,8 +51,14 @@ public class JournalServices {
         return journals!=null? journals : List.of();
     }
 
-    public Journal updateJournal(ObjectId id, Journal journal)
+    public Journal updateJournal(ObjectId id, Journal journal, String username)
     {
+        User user = userServices.findbyUserName(username);
+
+        if(user == null)
+        {
+            throw new RuntimeException("User Not FOund"+ username);
+        }
         return journalRepository.findById(id)
                 .map(existing->
                         {
@@ -65,7 +71,16 @@ public class JournalServices {
 
     public void deletebyId(String username, ObjectId id)
     {
+        User user = userServices.findbyUserName(username);
+
+        if(user == null)
+        {
+            throw new RuntimeException("User Not FOund"+ username);
+        }
         journalRepository.deleteById(id);
+        user.getJournalEntries().removeIf(x-> x.getId().equals(id));
+        userServices.save(user);
+
     }
 
     public void deleteAll()

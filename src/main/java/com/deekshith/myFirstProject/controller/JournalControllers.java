@@ -50,11 +50,11 @@ public class JournalControllers {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Journal> update(@RequestBody Journal journal, @PathVariable ObjectId id)
+    @PutMapping("/{username}/{id}")
+    public ResponseEntity<Journal> update(@RequestBody Journal journal,@PathVariable String username, @PathVariable ObjectId id)
     {
         try{
-            return new ResponseEntity<>(journalServices.updateJournal(id, journal),HttpStatus.OK);
+            return new ResponseEntity<>(journalServices.updateJournal(id, journal,username),HttpStatus.OK);
         }
         catch (Exception e)
         {
