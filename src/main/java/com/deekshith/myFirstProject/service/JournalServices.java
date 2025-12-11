@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,6 +35,9 @@ public class JournalServices {
         }
         journal.setDate(LocalDateTime.now());
         Journal saved = journalRepository.save(journal);
+        if (user.getJournalEntries() == null) {
+            user.setJournalEntries(new ArrayList<>());
+        }
         user.getJournalEntries().add(saved);
         userServices.save(user);
         return saved;
@@ -51,7 +55,7 @@ public class JournalServices {
         return journals!=null? journals : List.of();
     }
 
-    public Journal updateJournal(ObjectId id, Journal journal, String username)
+    public Journal updateJournal(Journal journal, String username,ObjectId id)
     {
         User user = userServices.findbyUserName(username);
 
@@ -77,9 +81,10 @@ public class JournalServices {
         {
             throw new RuntimeException("User Not FOund"+ username);
         }
-        journalRepository.deleteById(id);
-        user.getJournalEntries().removeIf(x-> x.getId().equals(id));
+        user.getJournalEntries().removeIf(x -> x.getId().equals(id));
         userServices.save(user);
+        journalRepository.deleteById(id);
+
 
     }
 
