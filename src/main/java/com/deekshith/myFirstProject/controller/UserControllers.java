@@ -58,7 +58,7 @@ public class UserControllers {
         User userTable = userServices.findbyUserName(username);
         if(userTable !=null)
         {
-            return new ResponseEntity<>(HttpStatus.FOUND);
+            return new ResponseEntity<>(userTable,HttpStatus.FOUND);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -70,7 +70,7 @@ public class UserControllers {
 //        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //    }
 
-    @PutMapping("/username")
+    @PutMapping("/{username}")
     public ResponseEntity<?> update(@RequestBody User user, @PathVariable String username)
     {
 

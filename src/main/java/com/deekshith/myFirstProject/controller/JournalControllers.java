@@ -44,7 +44,7 @@ public class JournalControllers {
     }
 
     @DeleteMapping("/{username}/{id}")
-    public ResponseEntity<?> delete(@PathVariable ObjectId id,String username)
+    public ResponseEntity<?> delete(@PathVariable String username,@PathVariable ObjectId id)
     {
         journalServices.deletebyId(username,id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -54,7 +54,7 @@ public class JournalControllers {
     public ResponseEntity<Journal> update(@RequestBody Journal journal,@PathVariable String username, @PathVariable ObjectId id)
     {
         try{
-            return new ResponseEntity<>(journalServices.updateJournal(id, journal,username),HttpStatus.OK);
+            return new ResponseEntity<>(journalServices.updateJournal(journal, username,id),HttpStatus.OK);
         }
         catch (Exception e)
         {
