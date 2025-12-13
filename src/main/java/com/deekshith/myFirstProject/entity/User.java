@@ -33,4 +33,6 @@ public class User {
     @DBRef
     private List<Journal> journalEntries;
 
+    private List<String> roles;
+
 }
