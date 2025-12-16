@@ -33,6 +33,12 @@ public class UserServices {
         return userRepository.save(user);
     }
 
+    public User saveNewUser(User user) {
+        user.setPassword(passwordencoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("User"));
+        return userRepository.save(user);
+    }
+
     public User findbyUserName(String username) {
         return userRepository.findByUsername(username);
     }
@@ -54,6 +60,11 @@ public class UserServices {
 
 
         userRepository.deleteById(id);
+    }
+
+    public void deletebyUsername(String username)
+    {
+
     }
 
     public User findby(String username)
