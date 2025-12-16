@@ -26,7 +26,7 @@ public class SpringSecurity{
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth-> auth
-                        .requestMatchers("/journal/**").authenticated()
+                        .requestMatchers("/journal/**","/user/**").authenticated()
                         .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults());
 

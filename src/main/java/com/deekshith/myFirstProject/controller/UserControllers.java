@@ -8,6 +8,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,18 +41,7 @@ public class UserControllers {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user)
-    {
-        try{
-            return new ResponseEntity<>(userServices.save(user),HttpStatus.CREATED);
-        }
-        catch (Exception e)
-        {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
-    }
 
     @GetMapping("/{username}")
     public ResponseEntity<?> getById(@PathVariable String username)
@@ -63,17 +54,20 @@ public class UserControllers {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-//    @DeleteMapping("/{username}")
-//    public ResponseEntity<?> delete(@PathVariable String username)
-//    {
-//        userServices.deletebyId(username);
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//    }
-
-    @PutMapping("/{username}")
-    public ResponseEntity<?> update(@RequestBody User user, @PathVariable String username)
+    @DeleteMapping
+    public ResponseEntity<?> delete()
     {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        userRepository.deleteByUsername(auth.getName());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-         return new ResponseEntity<>(userServices.update(user,username),HttpStatus.OK);
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody User user)
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        return new ResponseEntity<>(userServices.update(user,username),HttpStatus.OK);
     }
 }
