@@ -25,10 +25,13 @@ public class JournalControllers {
 
 
 
-    @PostMapping("/{username}")
-    public ResponseEntity<Journal> create(@RequestBody Journal journal,@PathVariable String username)
+    @PostMapping
+    public ResponseEntity<Journal> create(@RequestBody Journal journal)
     {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
         try{
+
             return new ResponseEntity<>(journalServices.save(journal,username),HttpStatus.CREATED);
         }
         catch (Exception e)
@@ -53,16 +56,20 @@ public class JournalControllers {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{username}/{id}")
-    public ResponseEntity<Journal> update(@RequestBody Journal journal,@PathVariable String username, @PathVariable ObjectId id)
-    {
-        try{
-            return new ResponseEntity<>(journalServices.updateJournal(journal, username,id),HttpStatus.OK);
-        }
-        catch (Exception e)
-        {
+    @PutMapping("/{id}")
+    public ResponseEntity<Journal> update(
+            @RequestBody Journal journal,
+            @PathVariable ObjectId id) {
 
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        try {
+            Journal updated = journalServices.updateJournal(journal, username, id);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
 }

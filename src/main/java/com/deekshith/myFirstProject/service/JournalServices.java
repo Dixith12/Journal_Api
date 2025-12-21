@@ -41,7 +41,7 @@ public class JournalServices {
             user.setJournalEntries(new ArrayList<>());
         }
         user.getJournalEntries().add(saved);
-        userServices.save(user);
+        userServices.saveNewUser(user);
         return saved;
     }
 
@@ -57,23 +57,28 @@ public class JournalServices {
         return journals!=null? journals : List.of();
     }
 
-    public Journal updateJournal(Journal journal, String username,ObjectId id)
-    {
+    public Journal updateJournal(Journal journal, String username, ObjectId id) {
+
         User user = userServices.findbyUserName(username);
 
-        if(user == null)
-        {
-            throw new RuntimeException("User Not FOund"+ username);
+        boolean ownsJournal = user.getJournalEntries()
+                .stream()
+                .anyMatch(j -> j.getId().equals(id));
+
+        if (!ownsJournal) {
+            throw new RuntimeException("Journal not found for user: " + username);
         }
-        return journalRepository.findById(id)
-                .map(existing->
-                        {
-                        existing.setTitle(journal.getTitle());
-                        existing.setContent(journal.getContent());
-                        existing.setDate(LocalDateTime.now());
-                        return journalRepository.save(existing);
-                        }).orElse(null);
+
+        Journal existing = journalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Journal not found"));
+
+        existing.setTitle(journal.getTitle());
+        existing.setContent(journal.getContent());
+        existing.setDate(LocalDateTime.now());
+
+        return journalRepository.save(existing);
     }
+
 
     public void deletebyId(String username, ObjectId id)
     {
@@ -84,7 +89,7 @@ public class JournalServices {
             throw new RuntimeException("User Not FOund"+ username);
         }
         user.getJournalEntries().removeIf(x -> x.getId().equals(id));
-        userServices.save(user);
+        userServices.saveNewUser(user);
         journalRepository.deleteById(id);
 
 

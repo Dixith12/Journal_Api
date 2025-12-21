@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -27,15 +26,13 @@ public class UserServices {
         return userRepository.findAll();
     }
 
-    public User save(User user) {
+    public User saveNewUser(User user) {
         user.setPassword(passwordencoder.encode(user.getPassword()));
         user.setRoles(Arrays.asList("User"));
         return userRepository.save(user);
     }
 
-    public User saveNewUser(User user) {
-        user.setPassword(user.getPassword());
-        user.setRoles(Arrays.asList("User"));
+    public User saveNewEntry(User user) {
         return userRepository.save(user);
     }
 
