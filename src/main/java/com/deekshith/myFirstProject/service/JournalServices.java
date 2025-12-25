@@ -80,19 +80,28 @@ public class JournalServices {
     }
 
 
+
+    @Transactional
     public void deletebyId(String username, ObjectId id)
     {
-        User user = userServices.findbyUserName(username);
+        try{
+            User user = userServices.findbyUserName(username);
 
-        if(user == null)
-        {
-            throw new RuntimeException("User Not FOund"+ username);
+            if(user == null)
+            {
+                throw new RuntimeException("User Not FOund"+ username);
+            }
+            boolean removed=user.getJournalEntries().removeIf(x -> x.getId().equals(id));
+            if(removed)
+            {
+                userServices.saveNewEntry(user);
+                journalRepository.deleteById(id);
+            }
+
         }
-        user.getJournalEntries().removeIf(x -> x.getId().equals(id));
-        userServices.saveNewUser(user);
-        journalRepository.deleteById(id);
-
-
+        catch (Exception e) {
+            throw new RuntimeException("There is Something Error Occured...",e);
+        }
     }
 
     public void deleteAll()

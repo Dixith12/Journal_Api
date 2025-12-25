@@ -55,15 +55,10 @@ public class UserServices {
 
 
     public void deletebyId(ObjectId id) {
-
-
         userRepository.deleteById(id);
     }
 
-    public void deletebyUsername(String username)
-    {
 
-    }
 
     public User findby(String username)
     {
