@@ -41,7 +41,7 @@ public class JournalServices {
             user.setJournalEntries(new ArrayList<>());
         }
         user.getJournalEntries().add(saved);
-        userServices.saveNewUser(user);
+        userServices.saveNewEntry(user);
         return saved;
     }
 
