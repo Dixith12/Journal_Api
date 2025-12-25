@@ -32,8 +32,8 @@ public class UserServices {
         return userRepository.save(user);
     }
 
-    public User saveNewEntry(User user) {
-        return userRepository.save(user);
+    public void saveNewEntry(User user) {
+        userRepository.save(user);
     }
 
     public User findbyUserName(String username) {
@@ -48,7 +48,8 @@ public class UserServices {
             throw new RuntimeException("User not found: " + username);
         }
         existingUser.setUsername(updatedData.getUsername());
-        existingUser.setPassword(updatedData.getPassword());
+        existingUser.setPassword(passwordencoder.encode(updatedData.getPassword()));
+        existingUser.setRoles(Arrays.asList("User"));
         return userRepository.save(existingUser);
     }
 
